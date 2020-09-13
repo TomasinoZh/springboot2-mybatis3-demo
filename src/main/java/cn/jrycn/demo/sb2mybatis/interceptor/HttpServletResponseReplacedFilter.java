@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import cn.jrycn.demo.sb2mybatis.util.JsonUtil;
 
 public class HttpServletResponseReplacedFilter implements Filter {
 
@@ -34,8 +35,8 @@ public class HttpServletResponseReplacedFilter implements Filter {
     response.getOutputStream().write(result.getBytes());
 
     logger.info("【过滤器】- {} {} {} {}", httpRequest.getMethod(), responseWrapper.getStatus(),
-        httpRequest.getRequestURI(),
-        result == null || result.length() == 0 ? "" : "\nResponse Body = " + result);
+        httpRequest.getRequestURI(), result == null || result.length() == 0 ? ""
+            : "\nResponse Body = " + JsonUtil.pretty(result));
   }
 
   @Override
