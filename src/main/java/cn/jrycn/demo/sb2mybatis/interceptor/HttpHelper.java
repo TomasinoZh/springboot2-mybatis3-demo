@@ -12,7 +12,6 @@ public class HttpHelper {
   private final static Logger logger = LoggerFactory.getLogger(HttpHelper.class);
 
   public static String getBodyString(HttpServletRequest request) {
-
     StringBuffer sb = new StringBuffer();
     InputStream inputStream;
     BufferedReader bufferedReader;

@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
-public class LogInterceptor implements HandlerInterceptor {
+public class RequestInterceptor implements HandlerInterceptor {
 
-  private final static Logger logger = LoggerFactory.getLogger(LogInterceptor.class);
+  private final static Logger logger = LoggerFactory.getLogger(RequestInterceptor.class);
 
   // 业务处理器处理请求之前被调用，对用户的request进行处理
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
@@ -30,8 +30,6 @@ public class LogInterceptor implements HandlerInterceptor {
         parameterString == null || parameterString.length() == 0 ? "" : "\n" + parameterString, // 解析后的参数
         cookieString == null || cookieString.length() == 0 ? "" : "\n" + cookieString, // cookie
         bodyString == null || bodyString.length() == 0 ? "" : "\n" + bodyString);// body
-    logger.info("【拦截器】- {} {} {}", request.getMethod(), response.getStatus(),
-        request.getRequestURI());
 
     // TODO Authentication 认证校验
     // TODO Authorization 权限校验

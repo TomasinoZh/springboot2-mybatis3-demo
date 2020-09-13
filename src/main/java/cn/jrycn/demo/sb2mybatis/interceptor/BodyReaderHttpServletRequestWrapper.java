@@ -13,15 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BodyReaderHttpServletRequestWrapper extends HttpServletRequestWrapper {
+
   private final static Logger logger =
       LoggerFactory.getLogger(BodyReaderHttpServletRequestWrapper.class);
-
   private final byte[] body;
 
   public BodyReaderHttpServletRequestWrapper(HttpServletRequest request) {
     super(request);
     // 获取到请求体
-//    logger.info("【过滤器】-【获取请求的body信息】");
+    // logger.info("【过滤器】-【获取请求的body信息】");
     body = HttpHelper.getBodyString(request).getBytes(Charset.forName("UTF-8"));
   }
 
@@ -35,6 +35,7 @@ public class BodyReaderHttpServletRequestWrapper extends HttpServletRequestWrapp
   public ServletInputStream getInputStream() throws IOException {
     // 节点流
     final ByteArrayInputStream bais = new ByteArrayInputStream(body);
+    
     return new ServletInputStream() {
       @Override
       public boolean isFinished() {

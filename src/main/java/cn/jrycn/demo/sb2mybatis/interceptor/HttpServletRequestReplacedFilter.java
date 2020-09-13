@@ -22,9 +22,10 @@ public class HttpServletRequestReplacedFilter implements Filter {
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
-//    logger.info("【过滤器】-【已进入过滤器！】");
-    ServletRequest requestWrapper =
-        new BodyReaderHttpServletRequestWrapper((HttpServletRequest) request);
+    // logger.info("【过滤器】-【已进入过滤器！】");
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    ServletRequest requestWrapper = new BodyReaderHttpServletRequestWrapper(httpRequest);
+
     chain.doFilter(requestWrapper, response);
   }
 
