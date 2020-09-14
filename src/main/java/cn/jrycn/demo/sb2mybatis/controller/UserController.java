@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.github.pagehelper.PageInfo;
 import cn.jrycn.demo.sb2mybatis.dto.JsonResult;
+import cn.jrycn.demo.sb2mybatis.exception.ForbiddenException;
 import cn.jrycn.demo.sb2mybatis.exception.NotFoundException;
 import cn.jrycn.demo.sb2mybatis.model.User;
 import cn.jrycn.demo.sb2mybatis.service.UserService;
@@ -72,6 +73,9 @@ public class UserController {
   @ApiOperation("删除用户")
   public JsonResult<Integer> removeUser(
       @Valid @PathVariable(name = "id", required = true) Integer id) {
+    if (id < 10) {
+      throw new ForbiddenException(); //防止删除超级管理员
+    }
     userService.removeUser(id);
     return new JsonResult<>(id);
   }
