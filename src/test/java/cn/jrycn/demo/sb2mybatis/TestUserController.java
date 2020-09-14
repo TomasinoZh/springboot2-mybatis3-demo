@@ -14,25 +14,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.jrycn.demo.sb2mybatis.controller.UserController;
+import cn.jrycn.demo.sb2mybatis.dto.JsonResult;
 import cn.jrycn.demo.sb2mybatis.model.User;
 
 
 @RunWith(SpringRunner.class)
-// @RunWith(SpringJUnit4ClassRunner.class)
-// @SpringBootTest(classes = UserController.class, webEnvironment = WebEnvironment.RANDOM_PORT)
-// @WebMvcTest(UserController.class)
 @WebMvcTest(value = UserController.class, secure = false)
 @AutoConfigureMybatis // add
 @ComponentScan(basePackages = {"cn.jrycn.demo.*"})
-// @MapperScan(basePackages = {"cn.jrycn.demo.sb2mybatis.dao"})
 public class TestUserController {
 
   @Autowired
   private MockMvc mvc;
   private RequestBuilder request = null;
-  private static Integer id = null;
 
   // @Test
   public void testA_AddOne() throws Exception {
@@ -46,24 +43,27 @@ public class TestUserController {
   }
 
   // @Test
-  public void testB_GetOne() throws Exception {
+  public int testB_GetOne() throws Exception {
     request = MockMvcRequestBuilders.get("/user/one").param("account", "abc");
     MvcResult rs = mvc.perform(request).andExpect(status().isOk()) // 添加断言
         // .andExpect(content().string("[]")) // 添加断言
         .andDo(print())// 添加执行
         .andReturn();// 添加返回
     String content = rs.getResponse().getContentAsString();
-    Gson gson = new Gson();
-    User user = gson.fromJson(content, User.class);
+
+    ObjectMapper mapper = new ObjectMapper();
+    JsonResult<User> myObjects =
+        mapper.readValue(content, new TypeReference<JsonResult<User>>() {});
+
+    User user = myObjects.getData();
     System.out.println("id: " + user.getId());
-    this.id = user.getId();
+    return user.getId();
   }
 
   // @Test
-  public void testC_ModifyOne() throws Exception {
-    System.out.println("id: " + this.id);
+  public void testC_ModifyOne(int id) throws Exception {
     request = MockMvcRequestBuilders.put("/user/modify").contentType(MediaType.APPLICATION_JSON)
-        .accept(MediaType.APPLICATION_JSON).content("{\"name\":\"abcd\",\"id\":" + this.id + "}");
+        .accept(MediaType.APPLICATION_JSON).content("{\"name\":\"abcd\",\"id\":" + id + "}");
     mvc.perform(request).andExpect(status().isOk()) // 添加断言
         // .andExpect(jsonPath("$.name").value("abcd")) // 添加断言
         .andDo(print())// 添加执行
@@ -84,9 +84,9 @@ public class TestUserController {
   }
 
   // @Test
-  public void testE_RemoveOne() throws Exception {
-    System.out.println("id: " + this.id);
-    request = MockMvcRequestBuilders.delete("/user/remove/" + this.id.toString());
+  public void testE_RemoveOne(int id) throws Exception {
+    System.out.println("id: " + id);
+    request = MockMvcRequestBuilders.delete("/user/remove/" + id);
     mvc.perform(request).andExpect(status().isOk()) // 添加断言
         .andDo(print())// 添加执行
         .andReturn();// 添加返回
@@ -95,9 +95,9 @@ public class TestUserController {
   @Test
   public void testSuit() throws Exception {
     testA_AddOne();
-    testB_GetOne();
-    testC_ModifyOne();
+    int id = testB_GetOne();
+    testC_ModifyOne(id);
     testD_GetAll();
-    testE_RemoveOne();
+    testE_RemoveOne(id);
   }
 }

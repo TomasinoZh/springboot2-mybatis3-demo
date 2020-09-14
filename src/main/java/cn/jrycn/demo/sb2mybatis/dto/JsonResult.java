@@ -1,6 +1,9 @@
 package cn.jrycn.demo.sb2mybatis.dto;
 
-public class JsonResult<T> {
+import java.io.Serializable;
+
+public class JsonResult<T> implements Serializable {
+  private static final long serialVersionUID = -6106112183978311676L;
   private T data;
   private int status;
   private String message;
